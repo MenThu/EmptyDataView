@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="tne-QT-ifu">
+            <objects>
+                <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="bSc-a3-M79"/>
+                        <viewControllerLayoutGuide type="bottom" id="YZP-TN-LAt"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="f0c-1D-dTX">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                                <color key="backgroundColor" red="1" green="0.75294117650000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            </tableView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gtj-l9-Hh2">
+                                <rect key="frame" x="10" y="567" width="80" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="80" id="Dqw-d3-vhL"/>
+                                    <constraint firstAttribute="height" constant="50" id="zBB-Dj-wly"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <state key="normal" title="insert">
+                                    <color key="titleColor" red="0.98431372549999996" green="0.0" blue="0.023529411760000001" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="deleteOrInsert:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Yjt-wu-cca"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hj7-bg-cSh">
+                                <rect key="frame" x="285" y="567" width="80" height="50"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <state key="normal" title="delete">
+                                    <color key="titleColor" red="0.98431372549999996" green="0.0" blue="0.023529411760000001" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="deleteOrInsert:" destination="BYZ-38-t0r" eventType="touchUpInside" id="pan-vh-8Ec"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="YZP-TN-LAt" firstAttribute="top" secondItem="f0c-1D-dTX" secondAttribute="bottom" id="69l-B5-Jra"/>
+                            <constraint firstAttribute="trailing" secondItem="hj7-bg-cSh" secondAttribute="trailing" constant="10" id="Cf8-RH-hBG"/>
+                            <constraint firstItem="gtj-l9-Hh2" firstAttribute="bottom" secondItem="f0c-1D-dTX" secondAttribute="bottom" constant="-50" id="Eqd-f7-kVo"/>
+                            <constraint firstItem="hj7-bg-cSh" firstAttribute="height" secondItem="gtj-l9-Hh2" secondAttribute="height" id="SnU-Re-sBs"/>
+                            <constraint firstItem="gtj-l9-Hh2" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="10" id="YBA-5W-pYv"/>
+                            <constraint firstAttribute="trailing" secondItem="f0c-1D-dTX" secondAttribute="trailing" id="ZXY-lb-tUl"/>
+                            <constraint firstItem="f0c-1D-dTX" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="nia-yK-ad6"/>
+                            <constraint firstItem="hj7-bg-cSh" firstAttribute="centerY" secondItem="gtj-l9-Hh2" secondAttribute="centerY" id="owC-ce-lmR"/>
+                            <constraint firstItem="f0c-1D-dTX" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="r96-UV-1Tg"/>
+                            <constraint firstItem="hj7-bg-cSh" firstAttribute="width" secondItem="gtj-l9-Hh2" secondAttribute="width" id="tBI-ib-5PO"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="tableView" destination="f0c-1D-dTX" id="GnX-Gd-Afj"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1049" y="24"/>
+        </scene>
+    </scenes>
+</document>

@@ -11,13 +11,13 @@
 #import "UIColor+HexString.h"
 
 static CGFloat const PlaceImageViewBottom2LabelTop = 10.f;
-static CGFloat const PlaceHoldViewTop2ContentInsetTop = 20.f;
 
 @interface PlaceHoldView ()
 
 @property (nonatomic, weak) UIImageView *placeHoldImagView;
 @property (nonatomic, weak) UILabel *placeHoldLabel;
 @property (nonatomic, copy) MTTapTableEmptyView tapEmpeyBlock;
+@property (nonatomic, assign) CGPoint placeHoldOffset;
 
 
 @end
@@ -26,6 +26,7 @@ static CGFloat const PlaceHoldViewTop2ContentInsetTop = 20.f;
 #pragma mark - LifeCircle
 + (instancetype)placeHoldWithImg:(NSString *)imgName
                        placeHold:(NSString *)placeHoldText
+                 placeHoldOffset:(CGPoint)placeHoldOffset
                          tapView:(MTTapTableEmptyView)tapBlock{
     PlaceHoldView *placeHoldView = [[PlaceHoldView alloc] init];
     if ([imgName isExist]) {
@@ -34,7 +35,10 @@ static CGFloat const PlaceHoldViewTop2ContentInsetTop = 20.f;
     if ([placeHoldText isExist]) {
         placeHoldView.placeHoldLabel.text = placeHoldText;
     }
-    placeHoldView.tapEmpeyBlock = tapBlock;
+    placeHoldView.placeHoldOffset = placeHoldOffset;
+    if (tapBlock) {
+        placeHoldView.tapEmpeyBlock = tapBlock;
+    }
     return placeHoldView;
 }
 
@@ -48,17 +52,13 @@ static CGFloat const PlaceHoldViewTop2ContentInsetTop = 20.f;
 
 - (void)layoutSubviews{
     [super layoutSubviews];
-    if ([self.superview isKindOfClass:[UIScrollView class]]) {
-        [self changeSubviewsFrame];
-    }else{
-        self.placeHoldImagView.hidden = self.placeHoldLabel.hidden = YES;
-        self.tapEmpeyBlock = nil;
-    }
+    [self changeSubviewsFrame];
 }
 
 #pragma mark - Private
 - (void)tapView:(UITapGestureRecognizer *)gesture{
     if (self.tapEmpeyBlock) {
+        self.hidden = YES;
         self.tapEmpeyBlock();
     }
 }
@@ -67,35 +67,27 @@ static CGFloat const PlaceHoldViewTop2ContentInsetTop = 20.f;
     if (CGRectEqualToRect(self.superview.bounds, CGRectZero)) {
         return;
     }
-    UIScrollView *superView = (UIScrollView *)self.superview;
     CGFloat superViewWidth = self.superview.bounds.size.width;
     CGFloat superViewHeight = self.superview.bounds.size.height;
-    CGFloat contentInsetTop = superView.contentInset.top;//+PlaceHoldViewTop2ContentInsetTop
+    
     
     CGFloat placeImgScale = 0;
     CGFloat placeHoldImageWidth = superViewWidth/2;
     CGFloat placeHoldImageHeight = 0;
-    if (self.placeHoldImagView.image != nil) {
-        placeImgScale = self.placeHoldImagView.image.size.width / self.placeHoldImagView.image.size.height;
+    if (_placeHoldImagView) {
+        placeImgScale = _placeHoldImagView.image.size.width / _placeHoldImagView.image.size.height;
         placeHoldImageHeight = placeHoldImageWidth/placeImgScale;
-        self.placeHoldImagView.hidden = NO;
-    }else{
-        self.placeHoldImagView.hidden = YES;
     }
     
     CGSize labelSize = CGSizeZero;
-    if ([self.placeHoldLabel.text isExist]) {
+    if (_placeHoldLabel) {
         CGSize labelMaxSize = CGSizeMake(placeHoldImageWidth, MAXFLOAT);
-        labelSize = [self.placeHoldLabel sizeThatFits:labelMaxSize];
-        self.placeHoldLabel.hidden = NO;
-    }else{
-        self.placeHoldLabel.hidden = YES;
+        labelSize = [_placeHoldLabel sizeThatFits:labelMaxSize];
     }
     
-    
-    CGFloat placeHoldViewWidth = MAX(labelSize.width, placeHoldImageWidth);
+    CGFloat placeHoldViewWidth = placeHoldImageWidth;
     CGFloat placeHoldViewHeight = placeHoldImageHeight + PlaceImageViewBottom2LabelTop + labelSize.height;
-    if (self.placeHoldLabel.hidden || self.placeHoldImagView.hidden) {
+    if (_placeHoldLabel == nil || _placeHoldImagView == nil) {
         placeHoldViewHeight -= PlaceImageViewBottom2LabelTop;
     }
     
@@ -104,29 +96,30 @@ static CGFloat const PlaceHoldViewTop2ContentInsetTop = 20.f;
      *  默认的，是将placeHoldView放在tableView可见范围的正中间
      *  但是考虑到contentInset.top的问题，这里需要调整
      **/
-    CGFloat placeHoldX = (superViewWidth-placeHoldViewWidth)/2;
-    CGFloat placeHoldY = (superViewHeight-placeHoldViewHeight)/2;
-    if (contentInsetTop > 0) {
-        placeHoldY = MAX(placeHoldY - contentInsetTop, PlaceHoldViewTop2ContentInsetTop);
-    }else if (contentInsetTop < 0){
-        placeHoldY -= contentInsetTop;
-    }
+    CGFloat placeHoldX = (superViewWidth-placeHoldViewWidth)/2 + self.placeHoldOffset.x;
+    CGFloat placeHoldY = (superViewHeight-placeHoldViewHeight)/2 + self.placeHoldOffset.y;
+//    CGFloat contentInsetTop = superView.contentInset.top;//+PlaceHoldViewTop2ContentInsetTop
+//    if (contentInsetTop > 0) {
+//        placeHoldY = MAX(placeHoldY - contentInsetTop, PlaceHoldViewTop2ContentInsetTop);
+//    }else if (contentInsetTop < 0){
+//        placeHoldY -= contentInsetTop;
+//    }
     self.frame = CGRectMake(placeHoldX, placeHoldY, placeHoldViewWidth, placeHoldViewHeight);
     
-    //确定placeHoldImagView与placeHoldLabel的frame
+    /**
+     *  确定placeHoldImagView与placeHoldLabel的frame
+     */
     CGFloat x = 0;
     CGFloat y = 0;
-    if (self.placeHoldImagView.hidden == NO) {
-        x = (placeHoldViewWidth - placeHoldImageWidth)/2;
+    if (_placeHoldImagView) {
+        x = 0;
         y = 0;
-        self.placeHoldImagView.frame = CGRectMake(x, y, placeHoldImageWidth, placeHoldImageHeight);
-        y = CGRectGetMaxY(self.placeHoldImagView.frame) + PlaceImageViewBottom2LabelTop;
-    }else{
-        y = 0;
+        _placeHoldImagView.frame = CGRectMake(x, y, placeHoldImageWidth, placeHoldImageHeight);
+        y = placeHoldImageHeight + PlaceImageViewBottom2LabelTop;
     }
-    if (self.placeHoldLabel.hidden == NO) {
+    if (_placeHoldLabel) {
         x = (placeHoldViewWidth - labelSize.width)/2;
-        self.placeHoldLabel.frame = CGRectMake(x, y, labelSize.width, labelSize.height);
+        _placeHoldLabel.frame = CGRectMake(x, y, labelSize.width, labelSize.height);
     }
 }
 
@@ -134,6 +127,7 @@ static CGFloat const PlaceHoldViewTop2ContentInsetTop = 20.f;
 - (UIImageView *)placeHoldImagView{
     if (_placeHoldImagView == nil) {
         UIImageView *placeHoldImagView = [[UIImageView alloc] init];
+        placeHoldImagView.backgroundColor = [UIColor cyanColor];
         placeHoldImagView.clipsToBounds = YES;
         placeHoldImagView.contentMode = UIViewContentModeScaleAspectFill;
         [self addSubview:(_placeHoldImagView = placeHoldImagView)];
@@ -144,9 +138,11 @@ static CGFloat const PlaceHoldViewTop2ContentInsetTop = 20.f;
 - (UILabel *)placeHoldLabel{
     if (_placeHoldLabel == nil) {
         UILabel *placeHoldLabel = [UILabel new];
+        placeHoldLabel.backgroundColor = [UIColor orangeColor];
         placeHoldLabel.textColor = [UIColor colorWithHexString:@"999999"];
         placeHoldLabel.font = [UIFont fontWithName:@"PingFangSC-Regular" size:14];
         placeHoldLabel.numberOfLines = 0;
+        placeHoldLabel.textAlignment = NSTextAlignmentCenter;
         [self addSubview:(_placeHoldLabel = placeHoldLabel)];
     }
     return _placeHoldLabel;
